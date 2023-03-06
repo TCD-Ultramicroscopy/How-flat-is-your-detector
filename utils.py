@@ -46,30 +46,29 @@ def find_ellipticity(inner_edge):
     return elp
 
 def calculate_smoothness(image, mask, hist):
-    # method 1, find max then fwhm
-    hist_f = hist[0]
-    bin_width = hist[1][1] - hist[1][0]
-    max_i = np.argmax(hist_f)
-    above_hm = hist_f > hist_f[max_i] / 2
+    # # method 1, find max then fwhm
+    # hist_f = hist[0]
+    # bin_width = hist[1][1] - hist[1][0]
+    # max_i = np.argmax(hist_f)
+    # above_hm = hist_f > hist_f[max_i] / 2
 
-    for i in range(max_i):
-        if not above_hm[max_i - i]:
-            break
-        low = max_i - i
+    # for i in range(max_i):
+    #     if not above_hm[max_i - i]:
+    #         break
+    #     low = max_i - i
 
-    for i in range(hist_f.size - max_i):
-        if not above_hm[max_i + i]:
-            break
-        high = max_i + i
+    # for i in range(hist_f.size - max_i):
+    #     if not above_hm[max_i + i]:
+    #         break
+    #     high = max_i + i
 
-    fwhm_1 = (high - low) * bin_width
+    # fwhm_1 = (high - low) * bin_width
 
-    # # method 2, just stats
-    # # mean = np.mean(image, where=mask)
-    # std = np.std(image, where=mask)
-    # fwhm_2 = std * 2.355
+    # method 2, just stats
+    std = np.std(image, where=mask)
+    fwhm_2 = std * 2.355
 
-    return fwhm_1
+    return fwhm_2
 
 
 def calculate_how_flat(_det_image, _mask_image, fname=None):
@@ -136,27 +135,27 @@ def calculate_how_flat(_det_image, _mask_image, fname=None):
     print("--------------------")
 
 
-    fig, axs = plt.subplots(2, 4)
+    fig, axs = plt.subplots(2, 4, figsize=(11,5))
 
     axs[0, 0].imshow(mask_image * _det_image)
     axs[0, 1].imshow(mask_image)
 
     axs[0, 2].imshow(det_polar)
     axs[0, 3].imshow(rad_mask + 2 * mask_polar)
-    axs[0, 3].plot(inner_r_filt, np.arange(det_polar.shape[0]), color='r')
+    axs[0, 3].plot(inner_r_filt, np.arange(det_polar.shape[0]), color='r', label="Inner")
 
     # ellipticity
-    axs[1, 0].plot(inner_r)
-    axs[1, 0].plot(inner_r_filt)
+    axs[1, 0].plot(inner_r, label="Raw")
+    axs[1, 0].plot(inner_r_filt, label="Filtered")
 
     # flatness
-    axs[1, 1].plot(det_rad)
-
     rad_start = np.argmax(mask_rad)
     rad_end = mask_rad.size - np.argmax(mask_rad[::-1]) - 1
 
-    axs[1, 1].axvline(x=rad_start, color = 'k')
-    axs[1, 1].axvline(x=rad_end, color = 'k')
+    axs[1, 1].axvline(x=rad_start, color='#CCCCCC', label="Limits")
+    axs[1, 1].axvline(x=rad_end, color='#CCCCCC')
+
+    axs[1, 1].plot(det_rad)
 
     # roundness
     axs[1, 2].plot(det_az)
@@ -186,8 +185,43 @@ def calculate_how_flat(_det_image, _mask_image, fname=None):
     axs[1, 3].plot(x, y)
 
     #
+    # make things look nice
+    #
+
+    axs[0, 3].legend()
+    axs[1, 0].legend()
+    axs[1, 1].legend()
+
+    axs[0, 0].axis('off')
+    axs[0, 1].axis('off')
+    axs[0, 2].axis('off')
+    axs[0, 3].axis('off')
+
+    axs[0, 0].set_title('Map')
+    axs[0, 1].set_title('Mask')
+    axs[0, 2].set_title('Map (polar)')
+    axs[0, 3].set_title('Mask (polar)')
+
+    axs[1, 0].set_xlabel('Azimuth (degrees)')
+    axs[1, 1].set_xlabel('Radius (pixels)')
+    axs[1, 2].set_xlabel('Azimuth (degrees)')
+    axs[1, 3].set_xlabel('Normalised intensity')
+
+    axs[1, 0].set_ylabel('Radius (pixels)')
+    axs[1, 1].set_ylabel('Normalised Intensity')
+    axs[1, 2].set_ylabel('Normalised Intensity')
+    axs[1, 3].set_ylabel('Frequency')
+
+    axs[1, 0].set_title('Inner radius')
+    axs[1, 1].set_title('Azimuthal average')
+    axs[1, 2].set_title('Radial average')
+    axs[1, 3].set_title('Active area histogram')
+
+    #
     # show plot
     #
+
+    plt.tight_layout()
 
     if fname is not None:
         plt.savefig(f'{fname}')

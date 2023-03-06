@@ -12,7 +12,7 @@ from read_dm3 import DM3
 #
 
 # Path to a DigitalMicrograph file containing a detector map (stacks will be averaged)
-detector_image_path = r"D:\OneDrive\OneDrive\Documents\PostDoc-TCD\Projects\pulse\pulse_paper\figures\data\how_flat\001_2710_JEOL ADF1.dm4"
+detector_image_path = r""
 
 # name of detector, purely for plotting and output
 detector_name = "How flat is " + os.path.basename(detector_image_path)

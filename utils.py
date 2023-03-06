@@ -119,15 +119,15 @@ def calculate_how_flat(_det_image, _mask_image, fname=None):
     det_smoothness = calculate_smoothness(det_image, mask_image, det_hist)
 
     print("Flatness")
-    print(f"Analog: {det_flatness}")
+    print(f"{det_flatness}")
     print("--------------------")
 
     print("Roundness")
-    print(f"Analog: {det_roundness}")
+    print(f"{det_roundness}")
     print("--------------------")
 
     print("Smoothness")
-    print(f"Analog: {det_smoothness}")
+    print(f"{det_smoothness}")
     print("--------------------")
 
     print("Ellipticity")

@@ -1,6 +1,7 @@
 # Specifics to this project
 *.dm3
 *.dm4
+*.pdf
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,1 +1,1 @@
-# How-flat-is-your-detector-
+# How-flat-is-your-detector
